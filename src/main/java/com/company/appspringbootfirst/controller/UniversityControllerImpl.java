@@ -1,6 +1,7 @@
 package com.company.appspringbootfirst.controller;
 
 import com.company.appspringbootfirst.model.University;
+import com.company.appspringbootfirst.service.UniversityService;
 import com.company.appspringbootfirst.service.UniversityServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
@@ -14,7 +15,7 @@ import java.util.Optional;
 @Controller
 @RequiredArgsConstructor
 public class UniversityControllerImpl implements UniversityController {
-    private final UniversityServiceImpl universityService;
+    private final UniversityService universityService;
 
     @Override
     public HttpEntity<List<University>> list() {
@@ -26,19 +27,21 @@ public class UniversityControllerImpl implements UniversityController {
         Optional<University> optionalUniversity = universityService.getById(id);
 
         return optionalUniversity
-                .map(university -> new ResponseEntity<>(university, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
 
     }
 
     @Override
     public HttpEntity<?> add(University university) {
         Optional<University> optionalUniversity = universityService.add(university);
-        if (optionalUniversity.isEmpty())
-            return new ResponseEntity<>("OKa university already exists", HttpStatus.CONFLICT);
+        if (optionalUniversity.isEmpty()) {
+            return new ResponseEntity<>("OKA university already exist", HttpStatus.CONFLICT);
+        }
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(optionalUniversity.get());
-
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(optionalUniversity.get());
     }
 
     @Override
@@ -46,7 +49,7 @@ public class UniversityControllerImpl implements UniversityController {
         Optional<University> optionalUniversity = universityService.edit(id, university);
 
         return optionalUniversity
-                .map(university1 -> ResponseEntity.accepted().body(university1))
+                .map(un -> ResponseEntity.accepted().body(un))
                 .orElseGet(() -> ResponseEntity.notFound().build());
 
     }

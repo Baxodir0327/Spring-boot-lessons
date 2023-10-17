@@ -35,15 +35,11 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     public Optional<University> edit(Integer id, University university) {
-        return null;/*universities.stream().filter(one -> one.getId().equals(id))
-                .peek(item -> item.setName(university.getName())).findFirst();*/
+        return Optional.ofNullable(universityDAO.edit(id, university));
     }
-
-
-
 
     @Override
     public boolean deleteById(Integer id) {
-        return false;
+        return universityDAO.delete(id);
     }
 }

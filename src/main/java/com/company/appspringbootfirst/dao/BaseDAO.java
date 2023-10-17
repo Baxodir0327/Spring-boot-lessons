@@ -10,7 +10,7 @@ public interface BaseDAO<T> {
 
     T save(T t);
 
-    T edit(T t);
+    T edit(Integer id, T t);
 
     boolean delete(Integer id);
 
