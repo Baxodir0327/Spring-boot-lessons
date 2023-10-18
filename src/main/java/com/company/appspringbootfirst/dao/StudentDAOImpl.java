@@ -25,13 +25,31 @@ public class StudentDAOImpl implements StudentDAO {
 
     @Override
     public List<Student> all() {
-        return jdbcTemplate.query("SELECT * from student", studentMapper);
+        return jdbcTemplate.query("""
+                        SELECT s.id as id,s.name as name ,g.id as g_id,g.name as g_name,f.id as f_id,f.name as f_name,
+                        u.id as u_id,u.name as u_name
+                        FROM student s
+                                 inner join groups g on s.group_id = g.id
+                                 inner join faculty f on f.id = g.faculty_id
+                                 inner join university u on u.id = f.university_id;
+                        """,
+                studentMapper);
     }
 
     @Override
     public Optional<Student> getById(Integer id) {
         try {
-            Student student = jdbcTemplate.queryForObject("SELECT * from student WHERE id=:id", Map.of("id", id), studentMapper);
+            Student student = jdbcTemplate.queryForObject("""
+                            SELECT s.id as id,s.name as name ,g.id as g_id,g.name as g_name,f.id as f_id,f.name as f_name,
+                            u.id as u_id,u.name as u_name
+                            FROM student s
+                                     inner join groups g on s.group_id = g.id
+                                     inner join faculty f on f.id = g.faculty_id
+                                     inner join university u on u.id = f.university_id
+                            where s.id=:id;
+
+                            """
+                    , Map.of("id", id), studentMapper);
             return Optional.ofNullable(student);
         } catch (DataAccessException e) {
             return Optional.empty();

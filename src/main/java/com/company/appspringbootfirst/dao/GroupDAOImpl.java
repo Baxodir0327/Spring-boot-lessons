@@ -27,13 +27,24 @@ public class GroupDAOImpl implements GroupDAO {
 
     @Override
     public List<Group> getAll() {
-        return jdbcTemplate.query("SELECT * FROM groups", groupMapper);
+        return jdbcTemplate.query("""
+                        SELECT g.id as id, g.name as name, f.id as f_id, f.name as f_name, u.id as u_id, u.name as u_name
+                        from groups g
+                                 inner join faculty f on g.faculty_id = f.id
+                                 inner join university u on u.id = f.university_id"""
+                , groupMapper);
     }
 
     @Override
     public Optional<Group> getById(Integer id) {
         try {
-            Group group = jdbcTemplate.queryForObject("SELECT * from groups WHERE id=:id", new MapSqlParameterSource("id", id), groupMapper);
+            Group group = jdbcTemplate.queryForObject("""
+                    SELECT g.id as id, g.name as name, f.id as f_id, f.name as f_name, u.id as u_id, u.name as u_name
+                    from groups g
+                             inner join faculty f on g.faculty_id = f.id
+                             inner join university u on u.id = f.university_id
+                    where f.id = :id;
+                    """, new MapSqlParameterSource("id", id), groupMapper);
             return Optional.ofNullable(group);
         } catch (DataAccessException e) {
             return Optional.empty();

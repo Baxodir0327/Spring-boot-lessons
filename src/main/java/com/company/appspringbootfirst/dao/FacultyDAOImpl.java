@@ -27,13 +27,13 @@ public class FacultyDAOImpl implements FacultyDAO {
 
     @Override
     public List<Faculty> getAll() {
-        return jdbcTemplate.query("SELECT * FROM faculty", facultyMapper);
+        return jdbcTemplate.query("SELECT f.id as id,f.name as name,u.id as u_id,u.name as u_name from faculty f join university u on f.university_id = u.id", facultyMapper);
     }
 
     @Override
     public Optional<Faculty> getById(Integer id) {
         try {
-            Faculty faculty = jdbcTemplate.queryForObject("SELECT * from faculty WHERE id=:id", new MapSqlParameterSource("id", id), facultyMapper);
+            Faculty faculty = jdbcTemplate.queryForObject("SELECT f.id as id,f.name as name,u.id as u_id,u.name as u_name from faculty f join university u on f.university_id = u.id where f.id=:id;", new MapSqlParameterSource("id", id), facultyMapper);
             return Optional.ofNullable(faculty);
         } catch (DataAccessException e) {
             return Optional.empty();
