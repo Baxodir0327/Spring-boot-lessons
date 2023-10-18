@@ -35,7 +35,12 @@ public class UniversityServiceImpl implements UniversityService {
 
     @Override
     public Optional<University> edit(Integer id, University university) {
-        return Optional.ofNullable(universityDAO.edit(id, university));
+        Optional<University> optionalUniversity = universityDAO.getById(id);
+        if (optionalUniversity.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(universityDAO.edit(id, university));
     }
 
     @Override

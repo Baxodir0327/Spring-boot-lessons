@@ -11,7 +11,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -76,14 +75,13 @@ public class UniversityDAOImpl implements UniversityDAO {
         jdbcTemplate.update("UPDATE university SET name=:name WHERE id=:id",
                 new MapSqlParameterSource("name", university.getName())
                         .addValue("id",id),
-                keyHolder, new String[]{"id", "name"});
+                keyHolder, new String[]{"id"});
 
         Integer id1 = (Integer) Objects.requireNonNull(keyHolder.getKeys()).get("id");
-        String name = (String) Objects.requireNonNull(keyHolder.getKeys()).get("name");
 
         return University.builder()
                 .id(id1)
-                .name(name)
+                .name(university.getName())
                 .build();
     }
 
